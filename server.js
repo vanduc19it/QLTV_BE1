@@ -8,6 +8,9 @@ const app = express()
 app.use(cors()) 
 const port = 5000;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // const pool = await conn;
 
 app.use(function (req, res, next) {
@@ -32,9 +35,9 @@ app.get('/student',async (req, res) => {
 
 app.post('/addCategory', async (req, res) => {
   const pool = await conn;
-  const sqlString = "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc) VALUES('estmadanhmuc',estmadanhmuc)"
+  const sqlString = "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc) VALUES(@MaDanhMuc,@TenDanhMuc)"
   console.log(req.body) ; 
-  await pool.request().query()
+  await pool.request()
   .input('MaDanhMuc', sql.Int, req.body.MaDanhMuc)
   .input('TenDanhMuc', sql.NVarChar, req.body.TenDanhMuc)
   .query(sqlString, function (err,data) {

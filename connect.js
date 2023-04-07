@@ -8,8 +8,8 @@ var sql = require('mssql/msnodesqlv8');
   database: 'QLTHUVIEN',
 //   port: 1433, 
   options: {
-    trustedConnection: true,
-
+    "trustedConnection": true,
+    "trustServerCertificate": true
   },
 
 };

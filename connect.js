@@ -5,7 +5,7 @@ var sql = require('mssql/msnodesqlv8');
   user: 'sa',
   password: '123',
   server: 'localhost'  || "127.0.0.1", 
-  database: 'QLTHUVIEN',
+  database: 'QLTHUVIEN2',
 //   port: 1433, 
   options: {
     "trustedConnection": true,

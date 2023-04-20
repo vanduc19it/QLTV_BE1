@@ -21,6 +21,20 @@ app.use(function (req, res, next) {
     next();
   });
 
+//get login
+app.post('/login',async (req, res) => {
+  const pool = await conn;
+    console.log(req.body.email, req.body.password)
+    const sqlString = "SELECT * FROM STUDENT WHERE email = @email AND password = @password"
+    await pool.request()
+    .input('email', sql.NVarChar, req.body.email)
+    .input('password', sql.NVarChar, req.body.password)
+    .query(sqlString, function(err, data) {
+        console.log(err, data)
+        res.send(data.recordsets[0])
+      });
+    
+})
 
   //get student
 app.get('/students/get-all',async (req, res) => {
@@ -178,7 +192,7 @@ app.delete('/book/delete/:bookID', async (req, res) => {
 app.post('/student/add-new', async (req, res) => {
   console.log(req,res)
   const pool = await conn;
-  const sqlString = "INSERT INTO STUDENT (name,email,phone,class,department,gender,birthday,address,uniID,imageName) VALUES(@name,@email,@phone,@class,@department,@gender,@birthday,@address,@uniID,@imageName)"
+  const sqlString = "INSERT INTO STUDENT (name,email,phone,class,department,gender,birthday,address,password,uniID,imageName) VALUES(@name,@email,@phone,@class,@department,@gender,@birthday,@address,@password,@uniID,@imageName)"
   console.log(req.body) ; 
   await pool.request()
   .input('name', sql.NVarChar, req.body.name)
@@ -189,6 +203,7 @@ app.post('/student/add-new', async (req, res) => {
   .input('gender', sql.NVarChar, req.body.gender)
   .input('birthday', sql.Date, req.body.birthday)
   .input('address', sql.NVarChar, req.body.address)
+  .input('password', sql.NVarChar, req.body.password)
   .input('uniID', sql.Int, req.body.uniID)
   .input('imageName', sql.NVarChar, req.body.imageName)
   .query(sqlString, function (err,data) {

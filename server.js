@@ -1,5 +1,6 @@
 const { conn, sql } = require("./connect");
 const express = require("express");
+let { roleData } = require("./singleton");
 
 var cors = require("cors");
 const router = express.Router();
@@ -10,7 +11,8 @@ const port = 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// const pool = await conn;
+// roleData.setData("xxxxxxx");
+const fs = require("fs");
 
 app.use(function (req, res, next) {
   //Enabling CORS
@@ -23,6 +25,9 @@ app.use(function (req, res, next) {
   next();
 });
 
+const LocalStorage = require("node-localstorage").LocalStorage;
+const localStorage = new LocalStorage("./localStorage");
+
 //get login
 app.post("/login", async (req, res) => {
   const pool = await conn;
@@ -34,7 +39,6 @@ app.post("/login", async (req, res) => {
     .input("email", sql.NVarChar, req.body.email)
     .input("password", sql.NVarChar, req.body.password)
     .query(sqlString, function (err, data) {
-      console.log(err, data);
       res.send(data.recordsets[0]);
     });
 });
@@ -52,19 +56,43 @@ app.post("/admin/login", async (req, res) => {
     .query(sqlString, function (err, data) {
       console.log(err, data);
       res.send(data.recordsets[0]);
+      roleData.setData(data.recordsets[0]);
+      localStorage.setItem("roleData", data.recordsets[0]);
+      fs.writeFileSync("data.txt", JSON.stringify(data.recordsets[0]));
     });
 });
+
+//get login employee
+app.post("/employee/login", async (req, res) => {
+  const pool = await conn;
+  console.log(req.body.email, req.body.password);
+  const sqlString =
+    "SELECT * FROM EMPLOYEE WHERE email = @email AND password = @password";
+  await pool
+    .request()
+    .input("email", sql.NVarChar, req.body.email)
+    .input("password", sql.NVarChar, req.body.password)
+    .query(sqlString, function (err, data) {
+      // console.log(err, data);
+      roleData.setData(data.recordsets[0]);
+      res.send(data.recordsets[0]);
+      localStorage.setItem("roleData", data);
+
+      console.log(localStorage.getItem("roleData"), "vvv");
+      fs.writeFileSync("data.txt", JSON.stringify(data.recordsets[0]));
+    });
+});
+
+roleData.setData("xxxxxxx");
 
 //get book by id
 app.post("/book/byID", async (req, res) => {
   const pool = await conn;
-  console.log(req.body.bookID);
   const sqlString = "SELECT * FROM BOOK WHERE bookID = @bookID";
   await pool
     .request()
     .input("bookID", sql.Int, req.body.bookID)
     .query(sqlString, function (err, data) {
-      console.log(err, data);
       res.send(data.recordsets[0][0]);
     });
 });
@@ -72,13 +100,11 @@ app.post("/book/byID", async (req, res) => {
 //get borrow by studentid
 app.post("/borrow/studentID", async (req, res) => {
   const pool = await conn;
-  console.log(req.body.studentID);
   const sqlString = "SELECT * FROM BORROWBOOK WHERE studentID = @studentID";
   await pool
     .request()
     .input("studentID", sql.Int, req.body.studentID)
     .query(sqlString, function (err, data) {
-      console.log(err, data, "hello");
       res.send(data.recordsets[0]);
     });
 });

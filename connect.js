@@ -5,7 +5,8 @@ const fs = require("fs");
 const data = fs.readFileSync("data.txt", "utf-8");
 
 const roleData = JSON.parse(data)[0];
-console.log("daaata", roleData);
+
+const STR = "NITRO5-DUCIT\\MSSQLSERVER";
 
 const config = {
   user: "sa",
@@ -64,6 +65,17 @@ const configWithSever4 = {
   },
 };
 
+const configWithSeverDynamic = (serverID) => ({
+  user: "sa",
+  password: "123",
+  server: `${STR}${serverID}`,
+  database: "QLTHUVIEN2",
+  //   port: 1433,
+  options: {
+    trustedConnection: true,
+    trustServerCertificate: true,
+  },
+});
 // let conn = null;
 // console.log({ rolll: roleData.data });
 

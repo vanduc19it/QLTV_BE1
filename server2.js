@@ -80,8 +80,8 @@ app.post("/employee/login", async (req, res) => {
     .input("password", sql.NVarChar, req.body.password)
     .query(sqlString, function (err, data) {
       res.send(data.recordsets[0]);
-      let newConfig = configWithSeverDynamic(data.recordsets[0][0]?.uniID);
-      let newConnection = new sql.ConnectionPool(newConfig)
+      let newConfig = await configWithSeverDynamic(data.recordsets[0][0]?.uniID);
+      let newConnection = await new sql.ConnectionPool(newConfig)
         .connect()
         .then((pool) => {
           return pool;

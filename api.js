@@ -1,7 +1,10 @@
-const dataAPI = async (app, conn, sql) => {
+const dataAPI = async (app, config, sql) => {
+  const pool = new sql.ConnectionPool(config)
+        .connect()
+        .then((pool) => {
+          return pool;
+        });
   //get book by id
-  const pool = await conn;
-
   app.post("/book/byID", async (req, res) => {
     const sqlString = "SELECT * FROM BOOK WHERE bookID = @bookID";
     await pool

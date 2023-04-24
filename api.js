@@ -1,5 +1,5 @@
 const dataAPI = async (app, config, sql) => {
-  const pool = new sql.ConnectionPool(config)
+  const pool = await new sql.ConnectionPool(config)
         .connect()
         .then((pool) => {
           return pool;
